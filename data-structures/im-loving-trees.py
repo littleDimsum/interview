@@ -25,17 +25,16 @@
 	# UNBALANCED
 
 ### consider redoing data structures in Java (Java's extensive 'built-in' data structures--useful)
-# later: methods should be under class
-# later: class Tree
-
 
 # binary search tree
 # Nodes must be UNIQUE
+# max # nodes per level 2^(l-1)  l = level (1-indexed)
+# max # nodes for tree: 2^h - 1 (h = tree height)
 class Node:
 	def __init__(self, data):
 		self.data = data
-		self.left_child = None
-		self.right_child = None
+		self.left_child = None # pointer to left child
+		self.right_child = None # pointer to right child
 		self.parent = None
 	def __str__(self):
 		return str(self.data)
@@ -76,7 +75,7 @@ def find(key, root):
 	''' Finds node containing key k, if it exists
 	'''
 	if root == None:
-		print 'Does not exist'
+		raise NameError
 	elif root.data > key:
 		find(key, root.left_child)
 	elif root.data < key:
@@ -89,6 +88,12 @@ def find_min(root):
 		print(root.data)
 	else:
 		find_min(root.left_child)
+
+def find_max(root):
+	if root.right_child is None:
+		print(root.data)
+	else:
+		find_max(root.right_child)
 
 def del_min(root):
 	if root.left_child is None:
@@ -103,12 +108,31 @@ def next_larger(node):
 	else:
 		return node.right_child
 
-def delete_node(node, root):
+def delete_node(node):
 	# check for existence of node
 	if not node.hasBothChildren():
 		node = None
-	# elif node
+	elif node.hasLeftChild():
+		node.parent.left_child = node.left_child
+		node.left_child.parent = node.parent
+		insert(node.parent, node.left_child)
+	elif node.hasRightChild():
+		node.parent.right_child = node.right_child
+		node.right_child.parent = node.parent
+		insert(node.parent, node.right_child)
+	elif node.hasBothChildren():
+		if node.right_child.left_child is not None: # inorder successor
+			save = node.right_child.left_child
+			node = save
+			delete_node(save)
+		else: #take larger successor
+			node = node.right_child
 
+			
+
+		#somehow reorder subsequent nodes
+
+### Depth First Traversal ###
 def in_order_traversal(root):
 	'''Visiting left child, parent, then right child
 	'''
@@ -133,6 +157,8 @@ def post_order_traversal(root):
 		post_order_traversal(root.right_child)
 		print(root)
 
+### Breadth First Traversal: Per level ###
+
 a = Node(10)
 b = Node(5)
 c = Node(15)
@@ -140,7 +166,6 @@ d = Node(1)
 e = Node(100)
 f = Node(6)
 g = Node(9)
-
 insert(a, b)
 insert(a, c)
 insert(a, d)
@@ -148,18 +173,16 @@ insert(a, e)
 insert(a, f)
 insert(a, g)
 
-# find(0, a)
-
+find(0, a)
 # del_min(a)
 # print(next_larger(a))
-
 # print(b.parent)
 # print(c.parent)
 in_order_traversal(a)
-# print
-# pre_order_traversal(a)
-# print
-# post_order_traversal(a)
+print
+pre_order_traversal(a)
+print
+post_order_traversal(a)
 # find_min(a)
 
 
